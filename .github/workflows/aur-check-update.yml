@@ -39,6 +39,7 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=date::$(date +%Y%m%d%H%M)"
+          git branch -r
           BODY=$(git diff --name-only | sed -e 's|^repo/|* |')
           echo "::set-output name=body::${BODY//$'\n'/'%0A'}"
       - name: Create Pull Request
