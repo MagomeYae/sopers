@@ -40,7 +40,8 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=date::$(date +%Y%m%d%H%M)"
-          github branch
+          git branch
+          git branch -r
           if [ -z "$(git branch | grep 'update/')" ]; then
             CREATE=0
           else
