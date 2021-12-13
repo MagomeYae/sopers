@@ -40,13 +40,18 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=date::$(date +%Y%m%d%H%M)"
-          CREATE=$([ -z "$(git branch -r | grep 'update/')" ])
+          if [ -z "$(git branch -r | grep 'update/')" ]; then
+            CREATE=1
+          else
+            CREATE=0
+          fi
           echo "create => $CREATE"
           BODY=$(git diff --name-only | sed -e 's|^repo/|* |')
           echo "::set-output name=body::${BODY//$'\n'/'%0A'}"
           echo "::set-output name=create::$CREATE"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
+        if: ${{ steps.get_env.outputs.create == 1 }}
         with:
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           commit-message: 'Auto update aur repository ${{ steps.get_env.outputs.date }}'
