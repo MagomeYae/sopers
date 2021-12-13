@@ -7,7 +7,7 @@ on:
     branches:    
       - master
       - ci/*
-  
+
 
 jobs:
   check-update:
