@@ -28,6 +28,7 @@ jobs:
         shell: bash
         run: |
           cd "$GITHUB_WORKSPACE"
+          git fetch
           git submodule update --init
       - name: Check updates
         shell: bash
@@ -39,9 +40,11 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=date::$(date +%Y%m%d%H%M)"
-          git branch -r
+          CREATE=$([ -z $(git branch -r | grep "update/") ])
+          echo "create => $CREATE"
           BODY=$(git diff --name-only | sed -e 's|^repo/|* |')
           echo "::set-output name=body::${BODY//$'\n'/'%0A'}"
+          echo "::set-output name=create::$CREATE"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
