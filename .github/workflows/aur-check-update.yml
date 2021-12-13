@@ -18,26 +18,29 @@ jobs:
 
     name: Build
     steps:
-      - name: Install requirements and initialize submodules
+      - name: Install requirements 
         shell: bash
         run: |
           pacman-key --init
           pacman --noconfirm --needed -Syu git python pyalpm python-aiohttp python-aiofiles
       - uses: actions/checkout@v2
+      - name: Initialize submodules
+        shell: bash
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          git submodule update --init
       - name: Check updates
         shell: bash
         run: |
           sed -i -e '/as root is not allowed/i \ \ \ \ \ \ \ \ true' -e '/as root is not allowed/,+3d' /usr/bin/makepkg
-          cd "$GITHUB_WORKSPACE"
-          git submodule update --init
           ./utils/aur/check-aur-update.py --parse-pkgbuild ./utils/parse-pkgbuild.sh repo
       - name: Set environments
         id: get_env
         shell: bash
         run: |
           echo "::set-output name=date::$(date +%Y%m%d%H%M)"
-          export BODY=$(git diff --name-only | sed -e 's|^repo/|* |')
-          echo "::set-output name=body::$BODY"
+          BODY=$(git diff --name-only | sed -e 's|^repo/|* |')
+          echo "::set-output name=body::${BODY//$'\n'/'%0A'}"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
