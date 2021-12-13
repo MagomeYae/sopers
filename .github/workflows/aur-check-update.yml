@@ -41,13 +41,13 @@ jobs:
         run: |
           echo "::set-output name=date::$(date +%Y%m%d%H%M)"
           git branch
+          echo "show remotes"
           git branch -r
           if [ -z "$(git branch | grep 'update/')" ]; then
             CREATE=0
           else
             CREATE=1
           fi
-          echo "create => $CREATE"
           BODY=$(git diff --name-only | sed -e 's|^repo/|* |')
           echo "::set-output name=body::${BODY//$'\n'/'%0A'}"
           echo "::set-output name=create::$CREATE"
