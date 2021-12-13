@@ -37,7 +37,7 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=date::$(date +%Y%m%d%H%M)"
-          cd "$GITHUB_WORKSPACE" || true
+          git diff --name-only
           echo "::set-output name=body::$(git diff --name-only | sed -e 's|^repo/|* |g')"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
